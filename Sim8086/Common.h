@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <format>
 
+//#define DEBUG
+
 using namespace std;
 
 using std::cout;
