@@ -1,10 +1,16 @@
 #include <iostream>
 #include <format>
 #include <fstream>
-#include <vector>
 
 #include "Common.h"
 #include "Decode.h"
+
+
+void test(mCodeItr &mCodePtr)
+{
+	cout << *mCodePtr << endl;
+	++mCodePtr;
+}
 
 
 int main(int argc, char *argv[])
@@ -25,18 +31,21 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	inFile.seekg(0, inFile.end);
+	const int length = inFile.tellg();
+	inFile.seekg(0, inFile.beg);
+
+	// read the machine code into vector
+	std::vector<u8> mCode(length);
+	inFile.read(reinterpret_cast<char*>(mCode.data()), length);
+
+
+	auto mCodePtr = mCode.begin(); // keep track of where we are in array
+
 	// force assembler to generate "original" 16-bit assembly
 	cout << "bits 16" << endl;
-
-	while (!inFile.eof())
+	while (mCodePtr != mCode.end())
 	{
-		u8 byte1;
-		u8 byte2;
-		if (!inFile.read((char*)&byte1, sizeof(byte1))) break;
-		if (!inFile.read((char*)&byte2, sizeof(byte2))) break;
-
-
-		u8 w = decode1(byte1);
-		decode2(byte2, w);
+		decode(mCodePtr);
 	}
 }

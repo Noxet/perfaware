@@ -1,11 +1,11 @@
 #include "Decode.h"
 
 
-u8 decode1(u8 data)
+u8 decode(mCodeItr &data)
 {
-	const u8 opCode = (data & 0xfa) >> 2;
-	const u8 d = (data & 0x02) >> 1;
-	const u8 w = data & 0x01;
+	const u8 opCode = (*data & 0xfa);
+	const u8 d = (*data & 0x02) >> 1;
+	const u8 w = *data & 0x01;
 
 
 #ifdef DEBUG
@@ -14,23 +14,19 @@ u8 decode1(u8 data)
 
 	cout << opName.at(opCode) << " ";
 
+	++data;
 
-	return w;
-}
-
-
-u8 decode2(u8 data, u8 word)
-{
-	const u8 reg = (data & 0x38) >> 3;
-	const u8 rm = (data & 0x07);
+	const u8 reg = (*data & 0x38) >> 3;
+	const u8 rm = (*data & 0x07);
 
 #ifdef DEBUG
-	cout << format("[decode 2] - data: {:02x}\treg: {:02x}\tR/M: {:02x}\tW: {:02x}", data, reg, rm, word) << endl;
+	cout << format("[decode 2] - data: {:02x}\treg: {:02x}\tR/M: {:02x}\tW: {:02x}", *data, reg, rm, w) << endl;
 #endif
 
 
-	cout << registerNamesW[rm][word] << ", " << registerNamesW[reg][word] << endl;
+	cout << registerNamesW[rm][w] << ", " << registerNamesW[reg][w] << endl;
 
+	++data;
 
-	return 0;
+	return w;
 }

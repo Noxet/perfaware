@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-#define OP_CODE(x) 
+using decodeFunc = void (*)();
 
 /* index: [register][W] */
 const std::string registerNamesW[][2] =
@@ -23,8 +23,12 @@ const std::string registerNamesW[][2] =
 
 const std::map<u8, std::string> opName =
 {
-	{ 0b100010, "mov" },
+	{ 0b10001000, "mov" },
+	{ 0b11000110, "mov" },
+	{ 0b10110000, "mov" },
+	{ 0b10100000, "mov" },
+	{ 0b10100010, "mov" },
+
 };
 
-u8 decode1(u8 data);
-u8 decode2(u8 data, u8 word);
+u8 decode(mCodeItr &data);
