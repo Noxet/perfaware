@@ -28,14 +28,9 @@ u8 decode2(u8 data, u8 word)
 	cout << format("[decode 2] - data: {:02x}\treg: {:02x}\tR/M: {:02x}\tW: {:02x}", data, reg, rm, word) << endl;
 #endif
 
-	if (word == 1)
-	{
-		cout << registerNamesW1[rm] << ", " << registerNamesW1[reg] << endl;
-	}
-	else
-	{
-		cout << registerNamesW0[rm] << ", " << registerNamesW0[reg] << endl;
-	}
+
+	cout << registerNamesW[rm][word] << ", " << registerNamesW[reg][word] << endl;
+
 
 	return 0;
 }

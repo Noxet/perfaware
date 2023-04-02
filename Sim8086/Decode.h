@@ -7,29 +7,19 @@
 
 #define OP_CODE(x) 
 
-const std::string registerNamesW0[] =
+/* index: [register][W] */
+const std::string registerNamesW[][2] =
 {
-	"al", // 000
-	"cl", // 001
-	"dl", // 010
-	"bl", // 011
-	"ah", // 100
-	"ch", // 101
-	"dh", // 110
-	"bh"  // 111
+	{ "al", "ax" }, // 000
+	{ "cl", "cx" }, // 001
+	{ "dl", "dx" }, // 010
+	{ "bl", "bx" }, // 011
+	{ "ah", "sp" }, // 100
+	{ "ch", "bp" }, // 101
+	{ "dh", "si" }, // 110
+	{ "bh", "di" }  // 111
 };
 
-const std::string registerNamesW1[] =
-{
-	"ax", // 000
-	"cx", // 001
-	"dx", // 010
-	"bx", // 011
-	"sp", // 100
-	"bp", // 101
-	"si", // 110
-	"di"  // 111
-};
 
 const std::map<u8, std::string> opName =
 {
