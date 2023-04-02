@@ -1,23 +1,22 @@
 #include "Decode.h"
 
 
-u8 decode(mCodeItr &data)
+u8 movDecode(mCodeItr &data)
 {
 	const u8 opCode = (*data & 0xfa);
-	const u8 d = (*data & 0x02) >> 1;
-	const u8 w = *data & 0x01;
+	const u8 d      = (*data & 0x02) >> 1;
+	const u8 w      = *data & 0x01;
 
+	++data;
 
 #ifdef DEBUG
 	std::cout << format("opCode val: {:02x}\tD: {:02x}\tW: {:02x}", opCode, d, w) << std::endl;
 #endif
 
-	cout << opName.at(opCode) << " ";
-
-	++data;
+	cout << "mov ";
 
 	const u8 reg = (*data & 0x38) >> 3;
-	const u8 rm = (*data & 0x07);
+	const u8 rm  = (*data & 0x07);
 
 #ifdef DEBUG
 	cout << format("[decode 2] - data: {:02x}\treg: {:02x}\tR/M: {:02x}\tW: {:02x}", *data, reg, rm, w) << endl;
@@ -28,5 +27,5 @@ u8 decode(mCodeItr &data)
 
 	++data;
 
-	return w;
+	return 0;
 }

@@ -13,6 +13,9 @@ void test(mCodeItr &mCodePtr)
 }
 
 
+constexpr u8 g_masks[] = { 0xfa, 0xfe, 0xf0, 0xff };
+
+
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
@@ -46,6 +49,16 @@ int main(int argc, char *argv[])
 	cout << "bits 16" << endl;
 	while (mCodePtr != mCode.end())
 	{
-		decode(mCodePtr);
+		// check all potential op codes (with masking) to find a decoder
+		for (const auto &mask : g_masks)
+		{
+			if (opName.contains(*mCodePtr & 0xfa))
+			{
+				// find the decoder function, e.g., mov, push etc.
+				const decodeFunc decoder = opName.at(*mCodePtr & 0xfa);
+				decoder(mCodePtr);
+				break;
+			}
+		}
 	}
 }

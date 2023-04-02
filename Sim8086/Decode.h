@@ -5,7 +5,11 @@
 #include <string>
 #include <map>
 
-using decodeFunc = void (*)();
+using decodeFunc = u8 (*)(mCodeItr &);
+
+// functions
+u8 decode(mCodeItr &data);
+u8 movDecode(mCodeItr &data);
 
 /* index: [register][W] */
 const std::string registerNamesW[][2] =
@@ -20,15 +24,17 @@ const std::string registerNamesW[][2] =
 	{ "bh", "di" }  // 111
 };
 
+constexpr u8 MOVRMR = 0b10001000;
+constexpr u8 MOVIRM = 0b11000110;
+constexpr u8 MOVIR  = 0b10110000;
+constexpr u8 MOVMA  = 0b10100000;
+constexpr u8 MOVAM  = 0b10100010;
 
-const std::map<u8, std::string> opName =
+const std::map<u8, decodeFunc> opName =
 {
-	{ 0b10001000, "mov" },
-	{ 0b11000110, "mov" },
-	{ 0b10110000, "mov" },
-	{ 0b10100000, "mov" },
-	{ 0b10100010, "mov" },
-
+	{ MOVRMR, movDecode },
+	{ MOVIRM, movDecode },
+	{ MOVIR, movDecode },
+	{ MOVMA, movDecode },
+	{ MOVAM, movDecode },
 };
-
-u8 decode(mCodeItr &data);
