@@ -7,9 +7,15 @@
 
 using decodeFunc = u8 (*)(mCodeItr &);
 
-// functions
-u8 decode(mCodeItr &data);
+/*
+ * MOV decoders
+ */
 u8 movDecode(mCodeItr &data);
+u8 movrmrDecode(mCodeItr &data);
+u8 movirmDecode(mCodeItr &data);
+u8 movirDecode(mCodeItr &data);
+u8 movmaDecode(mCodeItr &data);
+u8 movamDecode(mCodeItr &data);
 
 /* index: [register][W] */
 const std::string registerNamesW[][2] =
@@ -24,6 +30,22 @@ const std::string registerNamesW[][2] =
 	{ "bh", "di" }  // 111
 };
 
+/*
+ * index: [register][mod]
+ * mod = 01 and 10 store the same strings, the only difference is the immediate, which is given from the instruction
+ */
+const std::string addressNamesMod[] =
+{
+	"bx + si",
+	"bx + di",
+	"bp + si",
+	"bp + di",
+	"si",
+	"di",
+	"bp", // aware this value for MOD = 00
+	"bx",
+};
+
 constexpr u8 MOVRMR = 0b10001000;
 constexpr u8 MOVIRM = 0b11000110;
 constexpr u8 MOVIR  = 0b10110000;
@@ -32,9 +54,9 @@ constexpr u8 MOVAM  = 0b10100010;
 
 const std::map<u8, decodeFunc> opName =
 {
-	{ MOVRMR, movDecode },
-	{ MOVIRM, movDecode },
-	{ MOVIR, movDecode },
-	{ MOVMA, movDecode },
-	{ MOVAM, movDecode },
+	{ MOVRMR, movrmrDecode },
+	{ MOVIRM, movirmDecode },
+	{ MOVIR, movirDecode },
+	{ MOVMA, movmaDecode },
+	{ MOVAM, movamDecode },
 };

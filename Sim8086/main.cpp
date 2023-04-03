@@ -13,7 +13,7 @@ void test(mCodeItr &mCodePtr)
 }
 
 
-constexpr u8 g_masks[] = { 0xfa, 0xfe, 0xf0, 0xff };
+constexpr u8 g_masks[] = { 0xfc, 0xfe, 0xf0, 0xff };
 
 
 int main(int argc, char *argv[])
@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 		// check all potential op codes (with masking) to find a decoder
 		for (const auto &mask : g_masks)
 		{
+			//cout << format("Looking for opcode: {:08b}", *mCodePtr & mask) << endl;
 			if (opName.contains(*mCodePtr & mask))
 			{
 				// find the decoder function, e.g., mov, push etc.
@@ -60,5 +61,6 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
+		//getchar();
 	}
 }
