@@ -52,10 +52,10 @@ int main(int argc, char *argv[])
 		// check all potential op codes (with masking) to find a decoder
 		for (const auto &mask : g_masks)
 		{
-			if (opName.contains(*mCodePtr & 0xfa))
+			if (opName.contains(*mCodePtr & mask))
 			{
 				// find the decoder function, e.g., mov, push etc.
-				const decodeFunc decoder = opName.at(*mCodePtr & 0xfa);
+				const decodeFunc decoder = opName.at(*mCodePtr & mask);
 				decoder(mCodePtr);
 				break;
 			}

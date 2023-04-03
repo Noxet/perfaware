@@ -3,7 +3,7 @@
 
 u8 movDecode(mCodeItr &data)
 {
-	const u8 opCode = (*data & 0xfa);
+	const u8 opCode = *data & 0xfa;
 	const u8 d      = (*data & 0x02) >> 1;
 	const u8 w      = *data & 0x01;
 
