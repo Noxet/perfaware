@@ -8,6 +8,12 @@
 using decodeFunc = u8 (*)(mCodeItr &);
 
 /*
+ * Generic decoders
+ */
+u8 rmrDecoder(mCodeItr &data, string &regStr, string &addrStr);
+u8 irmDecoder(mCodeItr &data, string &addrStr, string &immStr);
+
+/*
  * MOV decoders
  */
 u8 movDecode(mCodeItr &data);
@@ -16,6 +22,14 @@ u8 movirmDecode(mCodeItr &data);
 u8 movirDecode(mCodeItr &data);
 u8 movmaDecode(mCodeItr &data);
 u8 movamDecode(mCodeItr &data);
+
+/*
+ * Arithmetic decoders
+ */
+u8 arithrmrDecode(mCodeItr &data);
+u8 arithirmDecode(mCodeItr &data);
+u8 arithiaDecode(mCodeItr &data);
+
 
 /* index: [register][W] */
 const std::string registerNamesW[][2] =
@@ -52,6 +66,11 @@ constexpr u8 MOVIR  = 0b10110000;
 constexpr u8 MOVMA  = 0b10100000;
 constexpr u8 MOVAM  = 0b10100010;
 
+constexpr u8 ARITHRMR = 0b00000000;
+constexpr u8 ARITHIRM = 0b10000000;
+constexpr u8 ARITHIA  = 0b00000100;
+
+
 const std::map<u8, decodeFunc> opName =
 {
 	{ MOVRMR, movrmrDecode },
@@ -59,4 +78,7 @@ const std::map<u8, decodeFunc> opName =
 	{ MOVIR, movirDecode },
 	{ MOVMA, movmaDecode },
 	{ MOVAM, movamDecode },
+	{ ARITHRMR, arithrmrDecode },
+	{ ARITHIRM, arithirmDecode },
+	{ ARITHIA, arithiaDecode },
 };

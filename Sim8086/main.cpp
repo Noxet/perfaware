@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 		// check all potential op codes (with masking) to find a decoder
 		for (const auto &mask : g_masks)
 		{
-			//cout << format("Looking for opcode: {:08b}", *mCodePtr & mask) << endl;
+			//cout << format("Looking for opcode: {:08b}, masked: {:08b}", *mCodePtr, *mCodePtr & mask) << endl;
 			if (opName.contains(*mCodePtr & mask))
 			{
 				// find the decoder function, e.g., mov, push etc.

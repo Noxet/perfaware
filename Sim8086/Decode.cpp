@@ -1,7 +1,7 @@
 #include "Decode.h"
 
 
-u8 movrmrDecode(mCodeItr &data)
+u8 rmrDecoder(mCodeItr &data, string &regStr, string &addrStr)
 {
 	const u8 d = (*data & 0x02) >> 1;
 	const u8 w = *data & 0x01;
@@ -12,7 +12,7 @@ u8 movrmrDecode(mCodeItr &data)
 	const u8 rm  = (*data & 0x07);
 	++data;
 
-	string regStr{}, addrStr{}, dispStr{};
+	string dispStr{};
 
 	regStr  = registerNamesW[reg][w];
 	addrStr = "[" + addressNamesMod[rm];
@@ -41,7 +41,7 @@ u8 movrmrDecode(mCodeItr &data)
 		break;
 	default:
 		cout << "Not valid MOD value" << endl;
-		return -1;
+		break;
 	}
 
 	// add displacement, if it exists
@@ -55,40 +55,32 @@ u8 movrmrDecode(mCodeItr &data)
 		addrStr += "]";
 	}
 
-	if (d)
-	{
-		cout << format("mov {}, {}", regStr, addrStr) << endl;
-	}
-	else
-	{
-		cout << format("mov {}, {}", addrStr, regStr) << endl;
-	}
-
 
 #ifdef DEBUG
-	cout << format("[mov rmr] - d: {:02x}\tw: {:02x}\tmod: {:02x}\treg: {:02x}\trm: {:02x}", d, w, mod, reg,
+	cout << format("[rmr] - d: {:02x}\tw: {:02x}\tmod: {:02x}\treg: {:02x}\trm: {:02x}", d, w, mod, reg,
 	               rm) << endl;
 #endif
 
-	return 0;
+	return d;
 }
 
 
-u8 movirmDecode(mCodeItr &data)
+u8 irmDecoder(mCodeItr &data, string &addrStr, string &immStr)
 {
 	// TODO: fix this func
-	cout << "mov ";
 
 	const u8 w = *data & 0x01;
 	++data;
 
-	const u8 mod = (*data & 0xc0) >> 6;
-	const u8 rm  = *data & 0x07;
+	const u8 mod   = (*data & 0xc0) >> 6;
+	const u8 instr = (*data & 0x38) >> 3;
+	const u8 rm    = *data & 0x07;
 	++data;
 
-	string regStr{}, addrStr{}, dispStr{};
+	string dispStr{};
 
 	addrStr = "[" + addressNamesMod[rm];
+
 	switch (mod)
 	{
 	case 0:
@@ -103,19 +95,64 @@ u8 movirmDecode(mCodeItr &data)
 			u16 disp = *data;
 			++data;
 			disp |= (*data << 8);
+			++data;
 			dispStr = to_string(disp);
+		}
+		break;
+	case 3:
+		addrStr = registerNamesW[rm][w];
+		if (w)
+		{
+			u8 imm = *data;
+			++data;
+			immStr = to_string(imm);
+		}
+		else
+		{
+			u16 imm = *data;
+			++data;
+			imm |= (*data << 8);
+			++data;
+			immStr = to_string(imm);
 		}
 		break;
 	default:
 		cout << "Not valid MOD value" << endl;
-		return -1;
+		break;
 	}
 
-	cout << format("mov {} {} TODO") << endl;
+	//cout << format("mov {} {} TODO") << endl;
 
 #ifdef DEBUG
-	cout << format("[mov irm] - w: {:02x}\tmod: {:02x}", w, mod) << endl;
+	cout << format("[irm] - w: {:02x}\tmod: {:02x}\tinstr: {:02x}\trm: {:02x}", w, mod, instr, rm) << endl;
 #endif
+
+	return 0;
+}
+
+
+u8 movrmrDecode(mCodeItr &data)
+{
+	string regStr{}, addrStr{};
+
+	const u8 d = rmrDecoder(data, regStr, addrStr);
+
+	if (d)
+	{
+		cout << format("mov {}, {}", regStr, addrStr) << endl;
+	}
+	else
+	{
+		cout << format("mov {}, {}", addrStr, regStr) << endl;
+	}
+
+	return 0;
+}
+
+
+u8 movirmDecode(mCodeItr &data)
+{
+	// TODO: call irmDecoder
 
 	return 0;
 }
