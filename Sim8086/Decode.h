@@ -86,6 +86,7 @@ constexpr u8 MOVIR  = 0b10110000;
 constexpr u8 MOVMA  = 0b10100000;
 constexpr u8 MOVAM  = 0b10100010;
 
+/* Arithmetic */
 constexpr u8 ARITHIRM = 0b10000000;
 constexpr u8 ADDRMR   = 0b00000000;
 constexpr u8 ADDIA    = 0b00000100;
@@ -93,6 +94,28 @@ constexpr u8 SUBRMR   = 0b00101000;
 constexpr u8 SUBIA    = 0b00101100;
 constexpr u8 CMPRMR   = 0b00111000;
 constexpr u8 CMPIA    = 0b00111100;
+
+/* Conditional jumps */
+constexpr u8 JE     = 0b01110100;
+constexpr u8 JL     = 0b01111100;
+constexpr u8 JLE    = 0b01111110;
+constexpr u8 JB     = 0b01110010;
+constexpr u8 JBE    = 0b01110110;
+constexpr u8 JP     = 0b01111010;
+constexpr u8 JO     = 0b01110000;
+constexpr u8 JS     = 0b01111000;
+constexpr u8 JNE    = 0b01110101;
+constexpr u8 JNL    = 0b01111101;
+constexpr u8 JNLE   = 0b01111111;
+constexpr u8 JNB    = 0b01110011;
+constexpr u8 JNBE   = 0b01110111;
+constexpr u8 JNP    = 0b01111011;
+constexpr u8 JNO    = 0b01110001;
+constexpr u8 JNS    = 0b01111001;
+constexpr u8 LOOP   = 0b11100010;
+constexpr u8 LOOPZ  = 0b11100001;
+constexpr u8 LOOPNZ = 0b11100000;
+constexpr u8 JCXZ   = 0b11100011;
 
 
 const std::map<u8, decodeFunc> opName =
