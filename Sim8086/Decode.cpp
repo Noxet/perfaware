@@ -65,10 +65,9 @@ u8 rmrDecoder(mCodeItr &data, string &regStr, string &addrStr)
 }
 
 
-u8 irmDecoder(mCodeItr &data, string &addrStr, string &immStr)
+u8 irmSDecoder(mCodeItr &data, string &addrStr, string &immStr)
 {
-	// TODO: fix this func
-
+	const u8 s = (*data & 0x02) >> 1;
 	const u8 w = *data & 0x01;
 	++data;
 
@@ -77,17 +76,29 @@ u8 irmDecoder(mCodeItr &data, string &addrStr, string &immStr)
 	const u8 rm    = *data & 0x07;
 	++data;
 
-	string dispStr{};
+	string dispStr{}, sizeStr{};
 
 	addrStr = "[" + addressNamesMod[rm];
 
 	switch (mod)
 	{
 	case 0:
+		if (rm == 6)
+		{
+			u16 directAddr = *data;
+			++data;
+			directAddr |= (*data << 8);
+			++data;
+			addrStr = "[" + to_string(directAddr) + "]";
+		}
+		else
+		{
+			addrStr += "]";
+		}
 		break;
 	case 1:
 		// 8 bit displacement
-		dispStr = to_string(*data);
+		dispStr = " + " + to_string(*data) + "]";
 		++data;
 		break;
 	case 2:
@@ -96,18 +107,21 @@ u8 irmDecoder(mCodeItr &data, string &addrStr, string &immStr)
 			++data;
 			disp |= (*data << 8);
 			++data;
-			dispStr = to_string(disp);
+			dispStr = " + " + to_string(disp) + "]";
 		}
 		break;
 	case 3:
 		addrStr = registerNamesW[rm][w];
-		if (w)
-		{
-			u8 imm = *data;
-			++data;
-			immStr = to_string(imm);
-		}
-		else
+
+		break;
+	default:
+		cout << "Not valid MOD value" << endl;
+		break;
+	}
+
+	if (w)
+	{
+		if (s == 0)
 		{
 			u16 imm = *data;
 			++data;
@@ -115,19 +129,63 @@ u8 irmDecoder(mCodeItr &data, string &addrStr, string &immStr)
 			++data;
 			immStr = to_string(imm);
 		}
-		break;
-	default:
-		cout << "Not valid MOD value" << endl;
-		break;
+		else
+		{
+			// TODO: sign extend 8 bit data to 16 bits
+			u16 imm = *data;
+			++data;
+			immStr = to_string(imm);
+		}
+
+		if (mod != 3)
+		{
+			// size string (byte/word) is used when storing an immediate at a mem address, to denote whether the immediate is 8 or 16 bits
+			sizeStr = "word ";
+		}
+	}
+	else
+	{
+		const u8 imm = *data;
+		++data;
+		immStr = to_string(imm);
+
+		if (mod != 3)
+		{
+			sizeStr = "byte ";
+		}
 	}
 
-	//cout << format("mov {} {} TODO") << endl;
+	addrStr = sizeStr + addrStr + dispStr;
 
 #ifdef DEBUG
-	cout << format("[irm] - w: {:02x}\tmod: {:02x}\tinstr: {:02x}\trm: {:02x}", w, mod, instr, rm) << endl;
+	cout << format("[irm] - s: {:02x}\tw: {:02x}\tmod: {:02x}\tinstr: {:02x}\trm: {:02x}", s, w, mod, instr,
+	               rm) << endl;
 #endif
 
-	return 0;
+	return instr;
+}
+
+
+u8 iaDecoder(mCodeItr &data, string &immStr)
+{
+	const u8 w = *data & 0x01;
+	++data;
+
+	if (w)
+	{
+		u16 imm = *data;
+		++data;
+		imm |= (*data << 8);
+		++data;
+		immStr = to_string(imm);
+	}
+	else
+	{
+		immStr = to_string(*data);
+		++data;
+	}
+
+	return w;
 }
 
 
