@@ -5,6 +5,7 @@
 #pragma comment (lib, "sim86_shared_debug.lib")
 
 #include "Cpu.h"
+#include "DataTransferExec.h"
 
 
 int main(int argc, char *argv[])
@@ -26,7 +27,7 @@ int main(int argc, char *argv[])
 	}
 
 	inFile.seekg(0, inFile.end);
-	const int mCodeLen = inFile.tellg();
+	const u32 mCodeLen = inFile.tellg();
 	inFile.seekg(0, inFile.beg);
 
 	// read the machine code into vector
@@ -50,17 +51,18 @@ int main(int argc, char *argv[])
 	{
 		instruction Decoded;
 		Sim86_Decode8086Instruction(mCodeLen - Offset, mCode + Offset, &Decoded);
-		if (Decoded.Op)
+		Offset += Decoded.Size;
+
+
+		switch (Decoded.Op)
 		{
-			Offset += Decoded.Size;
-			cout << format("{}", Sim86_MnemonicFromOperationType(Decoded.Op)) << endl;
-		}
-		else
-		{
-			printf("Unrecognized instruction\n");
+		case Op_mov:
+			dataTransferExec(&Decoded);
 			break;
 		}
 	}
+
+	printRegs();
 
 	return 0;
 }

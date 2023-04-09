@@ -141,10 +141,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cpu.cpp" />
+    <ClCompile Include="DataTransferExec.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cpu.h" />
+    <ClInclude Include="DataTransferExec.h" />
     <ClInclude Include="sim86_shared.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
