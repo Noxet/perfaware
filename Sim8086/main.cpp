@@ -4,6 +4,8 @@
 
 #include "Common.h"
 #include "Decode.h"
+#include "Cpu.h"
+
 
 /**
  * This lovely macro decodes the jump instructions, without having to use labels in asm.

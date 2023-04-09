@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d75da9ce-7650-45b2-ba46-8205ae58cee8}</ProjectGuid>
-    <RootNamespace>Sim8086</RootNamespace>
+    <ProjectGuid>{7d451034-fee1-478a-a20e-2a771502a764}</ProjectGuid>
+    <RootNamespace>Sim8086exe</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Sim8086dec</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -141,13 +140,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ArithmeticDecoder.cpp" />
-    <ClCompile Include="Decode.cpp" />
+    <ClCompile Include="Cpu.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="Decode.h" />
+    <ClInclude Include="Cpu.h" />
+    <ClInclude Include="sim86_shared.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

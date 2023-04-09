@@ -1,4 +1,5 @@
 #include "Decode.h"
+#include "Cpu.h"
 
 
 u8 rmrDecoder(mCodeItr &data, string &regStr, string &addrStr)
