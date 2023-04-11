@@ -24,6 +24,9 @@
     <ClCompile Include="DataTransferExec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ArithmeticExec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sim86_shared.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataTransferExec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArithmeticExec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

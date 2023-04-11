@@ -6,6 +6,7 @@
 
 #include "Cpu.h"
 #include "DataTransferExec.h"
+#include "ArithmeticExec.h"
 
 
 int main(int argc, char *argv[])
@@ -58,6 +59,11 @@ int main(int argc, char *argv[])
 		{
 		case Op_mov:
 			dataTransferExec(&Decoded);
+			break;
+		case Op_add:
+		case Op_sub:
+		case Op_cmp:
+			ArithmeticExec(&Decoded);
 			break;
 		}
 	}
