@@ -51,6 +51,7 @@ u8 ArithmeticExec(const instruction *instr)
 		}
 		break;
 	case Op_cmp:
+		// TODO: fix this
 		break;
 	}
 
