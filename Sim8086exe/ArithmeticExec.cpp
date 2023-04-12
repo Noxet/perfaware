@@ -71,6 +71,8 @@ u8 ArithmeticExec(const instruction *instr)
 
 	printf(" -> ");
 	printFlags();
+
+	printf(" IP: %d", cpu.ip);
 	printf("\n");
 
 	return 0;

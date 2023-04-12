@@ -141,12 +141,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArithmeticExec.cpp" />
+    <ClCompile Include="ControlExec.cpp" />
     <ClCompile Include="Cpu.cpp" />
     <ClCompile Include="DataTransferExec.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArithmeticExec.h" />
+    <ClInclude Include="ControlExec.h" />
     <ClInclude Include="Cpu.h" />
     <ClInclude Include="DataTransferExec.h" />
     <ClInclude Include="sim86_shared.h" />

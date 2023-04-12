@@ -45,6 +45,7 @@ u8 dataTransferExec(const instruction *instr)
 		break;
 	}
 
+	printf(" IP: %d", cpu.ip);
 	printf("\n");
 
 	return 0;

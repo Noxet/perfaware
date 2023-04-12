@@ -43,6 +43,7 @@ typedef struct
 	u16 REGS[8];
 	u16 MEM[1024 * 1024];
 	u16 flags;
+	u16 ip;
 } cpu_t;
 
 extern cpu_t cpu;

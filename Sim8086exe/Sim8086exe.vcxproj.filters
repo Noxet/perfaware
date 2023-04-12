@@ -27,6 +27,9 @@
     <ClCompile Include="ArithmeticExec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ControlExec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sim86_shared.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArithmeticExec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlExec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

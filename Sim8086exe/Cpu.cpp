@@ -1,6 +1,6 @@
 #include "Cpu.h"
 
-cpu_t cpu;
+cpu_t cpu{};
 
 
 static const char *g_cpuFlagStr[] =

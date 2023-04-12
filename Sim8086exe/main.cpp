@@ -7,6 +7,7 @@
 #include "Cpu.h"
 #include "DataTransferExec.h"
 #include "ArithmeticExec.h"
+#include "ControlExec.h"
 
 
 int main(int argc, char *argv[])
@@ -47,12 +48,15 @@ int main(int argc, char *argv[])
 	Sim86_Get8086InstructionTable(&Table);
 	printf("8086 Instruction Instruction Encoding Count: %u\n", Table.EncodingCount);
 
-	u32 Offset = 0;
-	while (Offset < mCodeLen)
+	//u32 Offset = 0;
+	while (cpu.ip < mCodeLen)
 	{
 		instruction Decoded;
-		Sim86_Decode8086Instruction(mCodeLen - Offset, mCode + Offset, &Decoded);
-		Offset += Decoded.Size;
+		Sim86_Decode8086Instruction(mCodeLen - cpu.ip, mCode + cpu.ip, &Decoded);
+		//Offset += Decoded.Size;
+
+		// advance the PC counter
+		cpu.ip += Decoded.Size;
 
 
 		switch (Decoded.Op)
@@ -65,7 +69,13 @@ int main(int argc, char *argv[])
 		case Op_cmp:
 			ArithmeticExec(&Decoded);
 			break;
+		case Op_jne:
+			ControlExec(&Decoded);
+			break;
 		}
+
+		//printRegs();
+		//getchar();
 	}
 
 	printRegs();
