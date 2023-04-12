@@ -30,7 +30,6 @@ void printFlags()
 	// don't print if no flag is set
 	if (cpu.flags == 0) return;
 
-	printf("flags: ");
 	for (int i = 0; i < 5; ++i)
 	{
 		if (cpu.flags & (1 << i))

@@ -10,7 +10,7 @@ u8 ArithmeticExec(const instruction *instr)
 	printf("%s ", Sim86_MnemonicFromOperationType(instr->Op));
 
 	instruction_operand dest = instr->Operands[0];
-	s32 val{};
+	u16 val{};
 	if (dest.Type == Operand_Register)
 	{
 		instruction_operand src = instr->Operands[1];
@@ -38,30 +38,38 @@ u8 ArithmeticExec(const instruction *instr)
 	}
 
 
+	u16 result{};
 	switch (instr->Op)
 	{
 	case Op_add:
 		{
 			cpu.REGS[REGIDX(dest)] += val;
+			result = cpu.REGS[REGIDX(dest)];
 		}
 		break;
 	case Op_sub:
 		{
 			cpu.REGS[REGIDX(dest)] -= val;
+			result = cpu.REGS[REGIDX(dest)];
 		}
 		break;
 	case Op_cmp:
-		// TODO: fix this
+		// do a subtraction, but do not update registers
+		result = cpu.REGS[REGIDX(dest)] - val;
 		break;
 	}
 
-	if (cpu.REGS[REGIDX(dest)] & 0x8000) cpu.flags |= SF;
+	printf(" Flags: ");
+	printFlags();
+
+	if (result & 0x8000) cpu.flags |= SF;
 	else cpu.flags &= ~SF;
 
 
-	if (cpu.REGS[REGIDX(dest)] == 0) cpu.flags |= ZF;
+	if (result == 0) cpu.flags |= ZF;
 	else cpu.flags &= ~ZF;
 
+	printf(" -> ");
 	printFlags();
 	printf("\n");
 
