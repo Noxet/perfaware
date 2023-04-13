@@ -42,6 +42,7 @@ void printFlags()
 
 void printMem(size_t offset, size_t size)
 {
+	printf("\nMemory:\n");
 	if (offset + size >= sizeof(cpu.MEM))
 	{
 		cout << "Can't print outside memory boundary" << endl;
@@ -50,6 +51,6 @@ void printMem(size_t offset, size_t size)
 
 	for (size_t i = offset; i < offset + size; ++i)
 	{
-		cout << format("[{}]: {:04x}", i, cpu.MEM[i]);
+		cout << format("[{}]: {:04x}\n", i, cpu.MEM[i]);
 	}
 }

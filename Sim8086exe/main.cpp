@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 	}
 
 	printRegs();
+	printMem(1000, 5);
 
 	return 0;
 }
