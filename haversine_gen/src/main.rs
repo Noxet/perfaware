@@ -1,4 +1,7 @@
+use std::println;
 use std::{collections::HashMap, fs::File, io::Write, mem};
+
+use std::time::Instant;
 
 use serde::Serialize;
 
@@ -20,6 +23,9 @@ struct Args {
 
     #[arg(short, long)]
     binary_out: bool,
+
+    #[arg(short, long)]
+    verbose: bool,
 }
 
 #[derive(Serialize, Debug)]
@@ -32,7 +38,7 @@ struct HPoint {
     y1: f64,
 }
 
-fn generate(count: u32, seed: u64, binary_out: bool) {
+fn generate(count: u32, seed: u64, binary_out: bool, verbose: bool) {
     let mut points: Vec<HPoint> = Vec::new();
 
     let mut file: Option<File> = if binary_out {
@@ -57,6 +63,7 @@ fn generate(count: u32, seed: u64, binary_out: bool) {
 
     let mut haversines: Vec<f64> = Vec::new();
 
+    let t_pre_loop = Instant::now();
     for _ in 0..count {
         let x0 = rng.gen::<f64>() * 360.0 - 180.0;
         let x1 = rng.gen::<f64>() * 360.0 - 180.0;
@@ -71,6 +78,13 @@ fn generate(count: u32, seed: u64, binary_out: bool) {
         points.push(p);
     }
 
+    // print timing info
+    if verbose {
+        let t_post_loop = Instant::now();
+        println!("gen loop:\t{:?}", t_post_loop.duration_since(t_pre_loop));
+    }
+
+    let t_write_bin_start = Instant::now();
     match file {
         Some(ref mut f) => {
             // we have to convert the f64 vector into an array of pure bytes
@@ -85,16 +99,43 @@ fn generate(count: u32, seed: u64, binary_out: bool) {
         None => (),
     }
 
+    if verbose {
+        let t_write_bin_end = Instant::now();
+        println!(
+            "write bin:\t{:?}",
+            t_write_bin_end.duration_since(t_write_bin_start)
+        );
+    }
+
+    let t_enc_json_start = Instant::now();
     // In order to have a correct JSON file, we need an outer map
     let mut hmap = HashMap::new();
     hmap.insert("points", points);
 
     // Create the JSON string
-    let ser = serde_json::to_string_pretty(&hmap).unwrap();
+    let ser = simd_json::to_string_pretty(&hmap).unwrap();
+
+    if verbose {
+        let t_enc_json_end = Instant::now();
+        println!(
+            "enc json:\t{:?}",
+            t_enc_json_end.duration_since(t_enc_json_start)
+        );
+    }
+
+    let t_write_json_start = Instant::now();
 
     let json_filename = format!("haversine_c{}_s{}.json", count, seed);
     let mut jsonfile = File::create(json_filename).expect("Failed to create JSON file");
     write!(&mut jsonfile, "{}", ser).expect("Failed to write JSON");
+
+    if verbose {
+        let t_write_json_end = Instant::now();
+        println!(
+            "write json:\t{:?}",
+            t_write_json_end.duration_since(t_write_json_start)
+        );
+    }
 }
 
 fn deg2rad(deg: f64) -> f64 {
@@ -124,5 +165,15 @@ fn haversine(p: &HPoint) -> f64 {
 
 fn main() {
     let args = Args::parse();
-    generate(args.count, args.seed, args.binary_out);
+
+    let t_generate_start = Instant::now();
+    generate(args.count, args.seed, args.binary_out, args.verbose);
+
+    if args.verbose {
+        let t_generate_end = Instant::now();
+        println!(
+            "generate time:\t{:?}",
+            t_generate_end.duration_since(t_generate_start)
+        );
+    }
 }
