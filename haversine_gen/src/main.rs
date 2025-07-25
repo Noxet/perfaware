@@ -110,7 +110,7 @@ fn generate(count: u32, seed: u64, binary_out: bool, verbose: bool) {
     let t_enc_json_start = Instant::now();
     // In order to have a correct JSON file, we need an outer map
     let mut hmap = HashMap::new();
-    hmap.insert("points", points);
+    hmap.insert("pairs", points);
 
     // Create the JSON string
     let ser = simd_json::to_string_pretty(&hmap).unwrap();
