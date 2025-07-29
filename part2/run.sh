@@ -14,6 +14,8 @@ elif [[ $1 = "r" ]]; then
 fi
 
 base="${file%.*}"
+# shift advances the argument pointer, to that "$@" points to the unused ones
+shift
+shift
 
-echo $base
-$base
+"./$base" "$@"
