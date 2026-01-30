@@ -8,19 +8,31 @@
 #include "util.h"
 
 
-#define TimeBlock(label) FunctionTimer _(label);
+#define TimeBlock(label) FunctionTimer _(label, __COUNTER__ + 1);
 #define TimeFunction TimeBlock(__FUNCTION__);
 
-struct timestamp
+
+#define TOT_ANCHORS 4096
+
+
+struct profiler_anchor
 {
-	std::string tag;
 	uint64_t elapsed;
+	uint64_t hits;
+	const char *label;
 };
 
-static std::vector<struct timestamp> g_timestamps{};
+struct profiler
+{
+	profiler_anchor anchors[TOT_ANCHORS];
+
+	uint64_t startTSC;
+	uint64_t endTSC;
+};
+
+static profiler g_profiler;
 static unsigned int g_counter{0};
 
-static uint64_t g_startTime;
 
 static u64 getOSTimerFreq(void)
 {
@@ -69,44 +81,51 @@ static u64 getApproxCPUFreq(u32 millisToWait)
 class FunctionTimer
 {
 public:
-	FunctionTimer(std::string tag)
+	FunctionTimer(const char *tag, uint32_t anchorIdx)
 	{
-		m_functionName = tag;
+		m_tag = tag;
 		m_start = readCPUTimer();
+		m_anchorIdx = anchorIdx;
 	}
 
 	~FunctionTimer()
 	{
-		uint64_t stop = readCPUTimer();
-		g_timestamps.push_back({m_functionName, stop - m_start});
-		g_counter++;
+		profiler_anchor *anchor = &g_profiler.anchors[m_anchorIdx];
+
+		anchor->label = m_tag;
+		anchor->elapsed += readCPUTimer() - m_start;
+		anchor->hits++;
 	}
 
 private:
+	const char *m_tag;
 	uint64_t m_start;
-	std::string m_functionName;
+	uint32_t m_anchorIdx;
 };
 
 
 
 void beginProfiler()
 {
-	g_timestamps.reserve(32);
-	g_startTime = __rdtsc();
+	g_profiler.startTSC = __rdtsc();
 }
 
 
 void endProfiler()
 {
-	uint64_t stop = __rdtsc();
+	g_profiler.endTSC = __rdtsc();
 	uint64_t cpuFreq = getApproxCPUFreq(100);
-	uint64_t totalTicks = stop - g_startTime;
+	uint64_t totalTicks = g_profiler.endTSC - g_profiler.startTSC;
 	double totalTime = totalTicks / (double)cpuFreq;
 
 	std::cout << std::format("Total time: {:.4f} ms (CPU freq: {})\n", totalTime, cpuFreq);
-	for (const auto &i : g_timestamps)
+	for (uint32_t i = 0; i < TOT_ANCHORS; i++)
 	{
-		std::cout << std::format("\t{}: {} ({:.2f}%)\n", i.tag, i.elapsed, (double) 100 * i.elapsed / totalTicks);
+		profiler_anchor *anchor = &g_profiler.anchors[i];
+		if (anchor->elapsed)
+		{
+			std::cout << std::format("\t{}: {} ({:.2f}%) hits: {}\n", anchor->label, anchor->elapsed, (double) 100 * anchor->elapsed / totalTicks, anchor->hits);
+		}
 	}
 }
 
