@@ -18,6 +18,7 @@
 struct profiler_anchor
 {
 	uint64_t elapsed;
+	uint64_t childrenElapsed;
 	uint64_t hits;
 	const char *label;
 };
@@ -31,7 +32,7 @@ struct profiler
 };
 
 static profiler g_profiler;
-static unsigned int g_counter{0};
+static uint32_t g_currentAnchor;
 
 
 static u64 getOSTimerFreq(void)
@@ -86,21 +87,34 @@ public:
 		m_tag = tag;
 		m_start = readCPUTimer();
 		m_anchorIdx = anchorIdx;
+		m_parentAnchor = g_currentAnchor;
+		g_currentAnchor = anchorIdx;
 	}
 
 	~FunctionTimer()
 	{
 		profiler_anchor *anchor = &g_profiler.anchors[m_anchorIdx];
+		profiler_anchor *parent = &g_profiler.anchors[m_parentAnchor];
+
+		int64_t elapsed = readCPUTimer() - m_start;
 
 		anchor->label = m_tag;
-		anchor->elapsed += readCPUTimer() - m_start;
+		anchor->elapsed += elapsed;
 		anchor->hits++;
+
+		if (g_currentAnchor)
+		{
+			parent->childrenElapsed += elapsed; // don't include the children run time
+		}
+
+		g_currentAnchor = m_parentAnchor;
 	}
 
 private:
 	const char *m_tag;
 	uint64_t m_start;
 	uint32_t m_anchorIdx;
+	uint32_t m_parentAnchor;
 };
 
 
@@ -118,13 +132,18 @@ void endProfiler()
 	uint64_t totalTicks = g_profiler.endTSC - g_profiler.startTSC;
 	double totalTime = totalTicks / (double)cpuFreq;
 
-	std::cout << std::format("Total time: {:.4f} ms (CPU freq: {})\n", totalTime, cpuFreq);
+	printf("Total time: %.4f ms (CPU freq: %zu)\n", totalTime, cpuFreq);
 	for (uint32_t i = 0; i < TOT_ANCHORS; i++)
 	{
 		profiler_anchor *anchor = &g_profiler.anchors[i];
 		if (anchor->elapsed)
 		{
-			std::cout << std::format("\t{}: {} ({:.2f}%) hits: {}\n", anchor->label, anchor->elapsed, (double) 100 * anchor->elapsed / totalTicks, anchor->hits);
+				printf("\t[%s]: %zu clks (%.2f%%", anchor->label, anchor->elapsed, (double) 100 * (anchor->elapsed - anchor->childrenElapsed) / totalTicks);
+			if (anchor->childrenElapsed)
+			{
+				printf(", children %.02f%%", 100.0 * anchor->childrenElapsed / totalTicks);
+			}
+			printf(") hits: %zu\n", anchor->hits);
 		}
 	}
 }
