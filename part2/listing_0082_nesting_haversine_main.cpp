@@ -11,7 +11,7 @@
    ======================================================================== */
 
 /* ========================================================================
-   LISTING 78
+   LISTING 82
    ======================================================================== */
 
 /* NOTE(casey): _CRT_SECURE_NO_WARNINGS is here because otherwise we cannot
@@ -46,10 +46,10 @@ struct haversine_pair
     f64 X1, Y1;
 };
 
-#include "mylist_76_simple_profiler.cpp"
+#include "mylist_81_nesting_profiler.cpp"
 #include "listing_0065_haversine_formula.cpp"
 #include "listing_0068_buffer.cpp"
-#include "listing_0077_profiled_lookup_json_parser.cpp"
+#include "listing_0079_timedblock_lookup_json_parser.cpp"
 
 static buffer ReadEntireFile(char *FileName)
 {
@@ -95,7 +95,6 @@ static f64 SumHaversineDistances(u64 PairCount, haversine_pair *Pairs)
     f64 SumCoef = 1 / (f64)PairCount;
     for(u64 PairIndex = 0; PairIndex < PairCount; ++PairIndex)
     {
-        TimeBlock("Loop hav");
         haversine_pair Pair = Pairs[PairIndex];
         f64 EarthRadius = 6372.8;
         f64 Dist = ReferenceHaversine(Pair.X0, Pair.Y0, Pair.X1, Pair.Y1, EarthRadius);
@@ -180,3 +179,4 @@ int main(int ArgCount, char **Args)
     return Result;
 }
 
+//static_assert(__COUNTER__ < ArrayCount(profiler::Anchors), "Number of profile points exceeds size of profiler::Anchors array");
