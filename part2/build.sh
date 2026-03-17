@@ -12,7 +12,7 @@ base="${file%.*}"
 mkdir -p out
 pushd out
 
-clang++ -g -Wall ../$file -o ${base}_deb
-clang++ -mavx2 -O3 -g -Wall ../$file -o ${base}_rel
+clang++ -g -Wall --std=c++23 ../$file -o ${base}_deb
+clang++ -mavx2 -O3 -g -Wall --std=c++23 ../$file -o ${base}_rel
 
 popd

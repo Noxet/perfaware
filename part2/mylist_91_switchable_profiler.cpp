@@ -5,12 +5,9 @@
 
 #include "util.h"
 
-
-#define TimeBlock(label) FunctionTimer _(label, __COUNTER__ + 1);
-#define TimeFunction TimeBlock(__FUNCTION__);
-
-
-#define TOT_ANCHORS 4096
+#ifndef PROFILER
+#define PROFILER 0
+#endif
 
 
 struct profiler_anchor
@@ -22,6 +19,9 @@ struct profiler_anchor
 	const char *label;
 };
 
+
+#define TOT_ANCHORS 4096
+
 struct profiler
 {
 	profiler_anchor anchors[TOT_ANCHORS];
@@ -31,9 +31,10 @@ struct profiler
 };
 
 static profiler g_profiler;
-static uint32_t g_currentAnchor;
 
-
+/**
+ * Timing-related functions
+ */
 static u64 getOSTimerFreq(void)
 {
     return 1000000; // us
@@ -76,6 +77,22 @@ static u64 getApproxCPUFreq(u32 millisToWait)
     return getOSTimerFreq() * cpuElapsed / osElapsed;
 }
 
+
+/* 
+ * we want to be able to turn off the profiler
+ * in case we want to verify that it doesn't affect the runtime too much
+ */
+#if PROFILER
+
+
+/**
+ * Profiler-related functions
+ */
+#define TimeBlock(label) FunctionTimer _(label, __COUNTER__ + 1);
+#define TimeFunction TimeBlock(__FUNCTION__);
+
+
+static uint32_t g_currentAnchor;
 
 
 class FunctionTimer
@@ -153,3 +170,24 @@ void endProfiler()
 	}
 }
 
+#else
+
+
+#define TimeBlock(...)
+#define TimeFunction
+
+void beginProfiler()
+{
+	g_profiler.startTSC = __rdtsc();
+}
+
+void endProfiler()
+{
+	g_profiler.endTSC = __rdtsc();
+	uint64_t cpuFreq = getApproxCPUFreq(100);
+	uint64_t totalTicks = g_profiler.endTSC - g_profiler.startTSC;
+	double totalTime = totalTicks / (double)cpuFreq;
+
+	printf("Total time: %.4f ms (CPU freq: %zu)\n", totalTime, cpuFreq);
+}
+#endif
