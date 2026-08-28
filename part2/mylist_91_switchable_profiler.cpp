@@ -153,7 +153,7 @@ void endProfiler()
 	uint64_t totalTicks = g_profiler.endTSC - g_profiler.startTSC;
 	double totalTime = totalTicks / (double)cpuFreq;
 
-	printf("Total time: %.4f ms (CPU freq: %zu)\n", totalTime, cpuFreq);
+	printf("Total time: %.4f ms (CPU freq: %zu)\n", 1000.0 * totalTime, cpuFreq);
 	for (uint32_t i = 0; i < TOT_ANCHORS; i++)
 	{
 		profiler_anchor *anchor = &g_profiler.anchors[i];
@@ -188,6 +188,6 @@ void endProfiler()
 	uint64_t totalTicks = g_profiler.endTSC - g_profiler.startTSC;
 	double totalTime = totalTicks / (double)cpuFreq;
 
-	printf("Total time: %.4f ms (CPU freq: %zu)\n", totalTime, cpuFreq);
+	printf("Total time: %.4f ms (CPU freq: %zu)\n", 1000.0 * totalTime, cpuFreq);
 }
 #endif
